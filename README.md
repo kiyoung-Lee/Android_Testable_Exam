@@ -5,9 +5,9 @@
 게 고치시오. [1점]
 
 ~~~
-public LocalDate calculateExpiry(int payAmounts) {
-  LocalData now = LocalData.now();
-  if(now.getMonth() == 8)
+public LocalDate calculateExpiry(int payAmounts) {  // 오타수정 LocalDat -> LocalDate
+  LocalDate now = LocalDate.now();        // 오타수정 LocalData -> LocalDate
+  if(now.getMonth() == Month.AUGUST)      // getMonth()의 리턴타입은 Month Enum Type 이므로 수정
     return now.plusMonths(payAmounts / 5000)
     .plusDays(15);
   else
@@ -21,12 +21,12 @@ void calculate() {
 }
 ~~~
 
-이유: LocalDate가 내부 변수로 선언되어 있어 조건문에 따른 테스트가 불가능하다.
+이유: LocalDate가 내부 변수로 선언되어 있어 조건에 따른 테스트가 불가능하다.
 
 수정:
 ~~~
 public LocalDate calculateExpiry(LocalDate now, int payAmounts) {
-  if(now.getMonth() == 8)
+  if(now.getMonth() == Month.AUGUST)
     return now.plusMonths(payAmounts / 5000)
     .plusDays(15);
   else
@@ -35,21 +35,25 @@ public LocalDate calculateExpiry(LocalDate now, int payAmounts) {
 
 @Test
 void calculate_8month() {
-  LocalDate now = mock(LocalDate.class);
+  //given
+  LocalDate now = LocalDate.of(2019,8,1);
   
-  when(now.getMonth()).thenReturn(8);
-  
+  //when
   LocalDate date = cal.calculateExpiry(now, 20000);
+  
+  //then
   assertEquals(LocalData.of(2019, 8, 14), date);
 }
 
 @Test
 void calculate_other_month() {
-  LocalDate noew = mock(LocalDate.class);
+  //given
+  LocalDate now = LocalDate.of(2019,3,1);
   
-  when(now.getMonth()).thenReturn(2);
-  
+  //when
   LocalDate date = cal.calculateExpiry(now, 20000);
-  assertEquals(LocalData.of(2019, 8, 14), date);
+  
+  //then
+  assertEquals(LocalData.of(2019, 7, 1), date);
 }
 ~~~
